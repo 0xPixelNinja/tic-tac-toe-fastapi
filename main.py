@@ -1,5 +1,4 @@
 from fastapi import FastAPI, HTTPException
-from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from backend.models import Game, Move
 from backend.db.database import (
@@ -13,13 +12,15 @@ from backend.logic.game_logic import (
     check_winner,
     check_draw,
 )
-import uuid
+from dotenv import load_dotenv
+import uuid, os
+
+load_dotenv()
 
 app = FastAPI()
 
 # Mount the 'frontend' directory as the root for static files
 app.mount("/files", StaticFiles(directory="frontend", html=True), name="static")
-
 
 @app.post("/create_game", response_model=Game)
 async def create_game():
@@ -89,7 +90,7 @@ async def make_move(game_id: str, move: Move):
     elif check_draw(game.board):
         game.status = "draw"
     else:
-        
+
         # Switch to the other player
         if game.current_player == game.player2:
             game.current_player = game.player1
@@ -128,4 +129,4 @@ if __name__ == "__main__":
 
     # --
     
-    uvicorn.run("main:app", host="0.0.0.0", port=8009, reload=reload)
+    uvicorn.run("main:app", host=str(os.getenv('HOST')), port=int(os.getenv('PORT')), reload=reload)
