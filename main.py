@@ -89,10 +89,15 @@ async def make_move(game_id: str, move: Move):
     elif check_draw(game.board):
         game.status = "draw"
     else:
+        
         # Switch to the other player
-        game.current_player = (
-            game.player1 if game.current_player == game.player2 else game.player2
-        )
+        if game.current_player == game.player2:
+            game.current_player = game.player1
+        else:
+            if not game.player2:
+                game.current_player = 'O'
+            else:
+                game.current_player = game.player2
 
     success = await update_game_db(game)
     if success:

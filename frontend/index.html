@@ -5,15 +5,14 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <h1>Tic Tac Toe</h1>
-
-    <div id="game-board">
+    <div class="container">
+        <h1>Tic Tac Toe</h1>
+        <div id="game-board"></div>
+        <div class="buttons">
+            <button onclick="createGame()">Create Game</button>
+            <button onclick="invitePlayer()">Invite Player</button>
+            <button onclick="copyGameID()">Copy Game ID</button>
         </div>
-
-    <button onclick="createGame()">Create Game</button>
-    <button onclick="invitePlayer()">Invite Player</button>
-    <button onclick="copyGameID()">Copy Game ID</button>
-
-    <script src="script.js"></script>
-</body>
+    </div>
+    <script src="script.js"></script> </body>
 </html>
