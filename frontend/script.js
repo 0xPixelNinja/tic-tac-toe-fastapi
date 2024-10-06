@@ -3,7 +3,7 @@ let gameId = null;
 let currentPlayer = ''; // Keep track of the current player
 
 async function createGame() {
-    const response = await fetch('/create_game', { method: 'POST' });
+    const response = await fetch('/api/create_game', { method: 'POST' });
     const game = await response.json();
     gameId = game.game_id;
     currentPlayer = 'X'
@@ -19,7 +19,7 @@ async function invitePlayer() {
     }
 
     try {
-        const response = await fetch(`/invite_player/${gameIdx}`, {
+        const response = await fetch(`/api/invite_player/${gameIdx}`, {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json'
@@ -50,7 +50,7 @@ async function makeMove(row, col) {
     }
 
     try {
-        const response = await fetch(`/make_move/${gameId}`, {
+        const response = await fetch(`/api/make_move/${gameId}`, {
             method: 'PUT',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ player: currentPlayer, row: row, col: col })
@@ -109,7 +109,7 @@ async function updateGameStatus() {
     }
 
     try {
-        const response = await fetch(`/game_status/${gameId}`);
+        const response = await fetch(`/api/game_status/${gameId}`);
         if (response.ok) {
             const game = await response.json();
             updateBoard(game.board);

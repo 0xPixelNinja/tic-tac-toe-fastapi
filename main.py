@@ -1,5 +1,6 @@
 from fastapi import FastAPI, HTTPException
 from fastapi.staticfiles import StaticFiles
+from fastapi.middleware.cors import CORSMiddleware
 from backend.models import Game, Move
 from backend.db.database import (
     create_game_db,
@@ -12,6 +13,7 @@ from backend.logic.game_logic import (
     check_winner,
     check_draw,
 )
+from fastapi.responses import FileResponse
 from dotenv import load_dotenv
 import uuid, os
 
@@ -19,10 +21,27 @@ load_dotenv()
 
 app = FastAPI()
 
-# Mount the 'frontend' directory as the root for static files
-app.mount("/files", StaticFiles(directory="frontend", html=True), name="static")
+origins = [
+    "http://0.0.0.0:8000",
+    "http://127.0.0.1:8000",
+]
 
-@app.post("/create_game", response_model=Game)
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+
+)
+# Mount the 'frontend' directory as the root for static files
+app.mount("/static", StaticFiles(directory="frontend"), name="static")
+
+@app.get("/")
+async def read_index():
+    return FileResponse("frontend/index.html")
+
+@app.post("/api/create_game", response_model=Game)
 async def create_game():
     """
     Creates a new game 😁
@@ -40,7 +59,7 @@ async def create_game():
     return game
 
 
-@app.put("/invite_player/{game_id}", response_model=Game)
+@app.put("/api/invite_player/{game_id}", response_model=Game)
 async def invite_player(game_id: str):
     """
     Invite the 2nd player, to the existing game
@@ -60,7 +79,7 @@ async def invite_player(game_id: str):
         raise HTTPException(status_code=500, detail="Failed to invite player")
 
 
-@app.put("/make_move/{game_id}", response_model=Game)
+@app.put("/api/make_move/{game_id}", response_model=Game)
 async def make_move(game_id: str, move: Move):
     """
     Makes a move in the game
@@ -107,7 +126,7 @@ async def make_move(game_id: str, move: Move):
         raise HTTPException(status_code=500, detail="Failed to update game")
 
 
-@app.get("/game_status/{game_id}", response_model=Game)
+@app.get("/api/game_status/{game_id}", response_model=Game)
 async def game_status(game_id: str):
     """
     Retrieves the current status of a game
