@@ -1,6 +1,5 @@
 from fastapi import FastAPI, HTTPException
 from fastapi.staticfiles import StaticFiles
-from fastapi.middleware.cors import CORSMiddleware
 from backend.models import Game, Move
 from backend.db.database import (
     create_game_db,
@@ -21,20 +20,7 @@ load_dotenv()
 
 app = FastAPI()
 
-origins = [
-    "http://0.0.0.0:8000",
-    "http://127.0.0.1:8000",
-]
-
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=origins,
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-
-)
-# Mount the 'frontend' directory as the root for static files
+# Mount the 'frontend' directory as the root for static files # yk
 app.mount("/static", StaticFiles(directory="frontend"), name="static")
 
 @app.get("/")
@@ -47,7 +33,7 @@ async def create_game():
     Creates a new game 😁
     
     """
-    game_id = str(uuid.uuid4()) # Generates a unique game ID
+    game_id = str(uuid.uuid4())
     game = Game(
         game_id=game_id,
         player1="X",
